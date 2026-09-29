@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --color-gold: #D4AF37;
+  --color-gold-light: #F3E5AB;
+  --color-gold-dark: #997E25;
+  --color-dark: #0A0B0E;
+  --color-card: #12141A;
+  --color-card-hover: #181B24;
+  --color-border: #242836;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: #E2E8F0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF3BF 0%, var(--color-gold) 50%, #AA820A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-btn-gradient {
+  background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 50%, var(--color-gold-dark) 100%);
+  color: #0A0B0E;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+}
+
+.gold-btn-gradient:active {
+  transform: scale(0.97);
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 9999px;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.cat-pill.active {
+  background: var(--color-gold);
+  color: #0A0B0E;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+}

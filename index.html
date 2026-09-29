@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="uz" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Shahzoda Restarani | Yakkabog', Qashqadaryo</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              goldLight: '#F3E5AB',
+              goldDark: '#997E25',
+              dark: '#0A0B0E',
+              card: '#12141A',
+              cardHover: '#181B24',
+              border: '#242836'
+            }
+          },
+          fontFamily: {
+            serif: ['Cinzel', 'Playfair Display', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="h-full flex flex-col justify-between overflow-x-hidden pb-24 md:pb-6">
+
+  <!-- ASOSIY HEADER -->
+  <header class="sticky top-0 z-40 bg-[#0A0B0E]/90 backdrop-blur-md border-b border-brand-border">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('client-view')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-goldDark to-brand-gold flex items-center justify-center text-brand-dark shadow-lg shadow-brand-gold/20 font-serif font-black text-xl">
+          👑
+        </div>
+        <div>
+          <h1 class="font-serif font-bold text-lg md:text-xl tracking-wide gold-gradient-text leading-tight">SHAHZODA</h1>
+          <p class="text-[11px] text-amber-200/60 font-medium tracking-wider uppercase">Yakkabog' • Qashqadaryo</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleCart(true)" class="relative p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-white transition flex items-center gap-2">
+          <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
+          <span class="hidden md:inline text-xs font-semibold">Savatcha</span>
+          <span id="headerCartCount" class="w-5 h-5 rounded-full bg-brand-gold text-brand-dark text-xs font-bold flex items-center justify-center">0</span>
+        </button>
+
+        <button onclick="openAdminModal()" class="p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-brand-gold transition flex items-center gap-2">
+          <i data-lucide="shield" class="w-5 h-5"></i>
+          <span class="hidden md:inline text-xs font-semibold">Admin</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ASOSIY MIJOZ SAHIFASI -->
+  <main id="client-view" class="flex-1 max-w-7xl mx-auto px-4 py-4 w-full">
+    <!-- RESTORAN DOIMIY BANNERI -->
+    <div class="relative rounded-3xl overflow-hidden border border-brand-border mb-6 bg-brand-card min-h-[220px] md:min-h-[300px] flex items-center">
+      <div class="absolute inset-0 w-full h-full z-0 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=80" alt="Restoran" class="w-full h-full object-cover">
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-transparent z-10"></div>
+      
+      <div class="relative z-20 p-6 md:p-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-xs font-semibold mb-3">
+          <span>✨</span> Haqiqiy Yakkabog' Shohona Taomlari
+        </div>
+        <h2 class="text-2xl md:text-4xl font-serif font-black gold-gradient-text mb-2">SHAHZODA RESTARANI</h2>
+        <p class="text-gray-300 text-xs md:text-sm mb-4 leading-relaxed">
+          Qashqadaryo viloyati, Yakkabog' tumani bo'ylab tezkor dastavka xizmati. Faqat sara go'sht va tabiiy masalliqlar.
+        </p>
+        <div class="flex flex-wrap gap-2 text-xs">
+          <span class="px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-amber-300 font-medium flex items-center gap-1.5">
+            <i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i> To'lov: Faqat Kuryerga Naqd
+          </span>
+          <span class="px-3 py-1.5 rounded-xl bg-black/60 border border-white/10 text-blue-300 font-medium flex items-center gap-1.5">
+            <i data-lucide="map-pin" class="w-4 h-4 text-rose-400"></i> Yakkabog' Tumani
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- KATEGORIYALAR -->
+    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-3 mb-6">
+      <button onclick="setCategory('all')" class="cat-pill active px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap" data-category="all">
+        Barchasi
+      </button>
+      <button onclick="setCategory('1-taom')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-brand-card hover:bg-brand-cardHover border border-brand-border text-gray-300" data-category="1-taom">
+        1-Taomlar (Sho'rvalar)
+      </button>
+      <button onclick="setCategory('2-taom')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-brand-card hover:bg-brand-cardHover border border-brand-border text-gray-300" data-category="2-taom">
+        2-Taomlar & Kaboblar
+      </button>
+      <button onclick="setCategory('salat')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-brand-card hover:bg-brand-cardHover border border-brand-border text-gray-300" data-category="salat">
+        Salatlar
+      </button>
+      <button onclick="setCategory('ichimlik')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-brand-card hover:bg-brand-cardHover border border-brand-border text-gray-300" data-category="ichimlik">
+        Ichimliklar & Non
+      </button>
+    </div>
+
+    <!-- TAOMLAR RO'YXATI -->
+    <div id="dishesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
+  </main>
+
+  <!-- SAVATCHA DRAWER -->
+  <div id="cartModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden transition-opacity flex justify-end">
+    <div class="w-full max-w-md bg-brand-card h-full border-l border-brand-border flex flex-col justify-between shadow-2xl">
+      <div class="p-4 border-b border-brand-border flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
+          <h3 class="font-serif font-bold text-lg text-white">Savatcha</h3>
+          <span id="cartCountBadge" class="text-xs bg-brand-gold/20 text-brand-gold font-bold px-2 py-0.5 rounded-full">0 ta</span>
+        </div>
+        <!-- X TUGMASI -->
+        <button onclick="toggleCart(false)" title="Yopish (X)" class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div id="cartItemsList" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-3"></div>
+
+      <div class="p-4 border-t border-brand-border bg-black/40 space-y-3">
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-400">Jami taomlar:</span>
+          <span id="cartSubtotal" class="font-bold text-white">0 so'm</span>
+        </div>
+        <div class="flex justify-between items-center text-sm">
+          <span class="text-gray-400">Dastavka (Yakkabog'):</span>
+          <span id="deliveryCost" class="font-bold text-emerald-400">10 000 so'm</span>
+        </div>
+        <div class="flex justify-between items-center text-base pt-2 border-t border-brand-border font-serif">
+          <span class="font-bold gold-gradient-text">To'lov Summasi:</span>
+          <span id="cartTotal" class="font-bold text-xl text-brand-gold">0 so'm</span>
+        </div>
+
+        <button onclick="openCheckoutModal()" id="btnCheckout" class="w-full py-3.5 rounded-xl gold-btn-gradient text-sm uppercase tracking-wider font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-brand-gold/10">
+          <span>Rasmiylashtirish</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASTAFKA VA BUYURTMA RASMIYLASHTIRISH OYNASI -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3">
+    <div class="w-full max-w-lg bg-brand-card rounded-3xl border border-brand-border overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+      <div class="p-4 border-b border-brand-border flex items-center justify-between bg-black/30">
+        <div>
+          <h3 class="font-serif font-bold text-base md:text-lg text-white">Dastavka & Buyurtma</h3>
+          <p class="text-xs text-amber-200/70">Qashqadaryo viloyati, Yakkabog' tumani</p>
+        </div>
+        <!-- X TUGMASI -->
+        <button onclick="closeCheckoutModal()" title="Dastavkani yopish (X)" class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition flex items-center justify-center">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="orderForm" onsubmit="submitOrder(event)" class="p-4 overflow-y-auto custom-scroll space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Ismingiz * (Faqat harflar)</label>
+          <input type="text" id="custName" required placeholder="Ismingizni kiriting" oninput="this.value = this.value.replace(/[^a-zA-Z\u0400-\u04FF\s'\-]/g, '')" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-brand-border text-white text-sm focus:border-brand-gold outline-none">
+        </div>
+
+        <!-- TELEFON RAQAM BO'LIMI: AVTOMATIK MASKALANGAN -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">Telefon Raqamingiz *</label>
+          <div class="relative">
+            <input type="tel" id="custPhone" required placeholder="+998 (90) 123-45-67" maxlength="19" oninput="handlePhoneInput(this)" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-brand-border text-white text-sm focus:border-brand-gold outline-none font-mono tracking-wide">
+          </div>
+          <div class="mt-1.5 p-2 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-[11px]">
+            <span class="text-amber-300 font-semibold flex items-center gap-1">
+              <i data-lucide="phone-call" class="w-3.5 h-3.5 text-brand-gold"></i> Namuna: +998 (90) 123-45-67
+            </span>
+            <span id="phoneDigitCounter" class="text-gray-400 font-mono text-[10px]">0 / 9 raqam</span>
+          </div>
+          <p id="phoneErrorMsg" class="text-[11px] text-rose-400 mt-1 hidden font-medium">Telefon raqam to'liq kiritilishi shart (9 ta raqam bo'lishi kerak)!</p>
+        </div>
+
+        <!-- PROMOKOD BO'LIMI -->
+        <div class="bg-black/40 p-3.5 rounded-2xl border border-brand-border space-y-2">
+          <label class="block text-xs font-bold text-brand-gold">Promokod qo'shish</label>
+          <div class="flex gap-2">
+            <input type="text" id="promoCodeInput" placeholder="KODNI KIRITING" class="flex-1 uppercase px-3 py-2 rounded-xl bg-black border border-brand-border text-white text-xs outline-none focus:border-brand-gold font-bold tracking-wider">
+            <button type="button" onclick="applyPromoCode()" class="px-4 py-2 rounded-xl gold-btn-gradient text-xs font-bold whitespace-nowrap">
+              Qo'llash
+            </button>
+          </div>
+          <p id="promoMessage" class="text-[11px] hidden font-medium"></p>
+        </div>
+
+        <!-- MANZIL -->
+        <div class="bg-black/30 p-3.5 rounded-2xl border border-brand-border space-y-3">
+          <div class="flex items-center gap-2 text-xs font-bold text-brand-gold">
+            <i data-lucide="map-pin" class="w-4 h-4"></i>
+            <span>Yetkazib Berish Manzili (O'zingiz erkin yozing)</span>
+          </div>
+
+          <div>
+            <label class="block text-[11px] text-gray-400 mb-1">Mahalla, ko'cha, uy va mo'ljal *</label>
+            <textarea id="custAddressText" required rows="2" placeholder="Mahalla, ko'cha, xonadon raqami va mo'ljalni yozing..." class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-white text-xs outline-none focus:border-brand-gold"></textarea>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-2xl bg-amber-500/10 border border-brand-gold/30 space-y-2">
+          <div class="flex items-center gap-2 text-xs font-bold text-amber-300">
+            <i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i>
+            <span>To'lov usuli: Faqat Naqd Pul</span>
+          </div>
+          <p class="text-[11px] text-gray-300">
+            Taom yetib borgach kuryerga naqd to'laysiz.
+          </p>
+          <div class="pt-1">
+            <label class="block text-[11px] text-gray-400 mb-1">Qaytim kerakmi? (Qancha puldan qaytim olib boraylik?)</label>
+            <input type="text" id="custChange" placeholder="Qaytim summasini yozing (masalan: 100 000 so'mdan)" class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-white text-xs outline-none focus:border-brand-gold">
+          </div>
+        </div>
+
+        <!-- HISOBO VA TO'LOV TUGMASI -->
+        <div class="p-3 rounded-xl bg-black border border-brand-border space-y-1.5 text-xs">
+          <div class="flex justify-between text-gray-400">
+            <span>Taomlar:</span>
+            <span id="checkoutSubtotal" class="font-bold text-white">0 so'm</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Dastavka:</span>
+            <span class="font-bold text-emerald-400">10 000 so'm</span>
+          </div>
+          <div id="checkoutDiscountRow" class="flex justify-between text-rose-400 hidden font-semibold">
+            <span>Promokod chegirmasi:</span>
+            <span id="checkoutDiscountVal">-0 so'm</span>
+          </div>
+          <div class="flex justify-between text-sm font-bold pt-1.5 border-t border-brand-border/60">
+            <span class="gold-gradient-text">Jami to'lov:</span>
+            <span id="checkoutFinalTotal" class="text-brand-gold">0 so'm</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeCheckoutModal()" class="w-1/3 py-3 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-white/10 text-xs uppercase tracking-wider font-bold transition">
+            ✕ Bekor qilish
+          </button>
+          <button type="submit" class="w-2/3 py-3 rounded-xl gold-btn-gradient text-xs uppercase tracking-wider font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-brand-gold/20">
+            <span>Tasdiqlash</span>
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- BUYURTMA QABUL CHEKI (MODAL) -->
+  <div id="receiptModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-brand-card rounded-3xl border border-brand-gold/40 p-6 text-center space-y-4 shadow-2xl relative">
+      <button onclick="closeReceiptModal()" title="Yopish (X)" class="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto text-2xl font-bold">
+        ✓
+      </div>
+      <div>
+        <h3 class="font-serif font-black text-xl text-white">Buyurtmangiz Qabul Qilindi!</h3>
+        <p class="text-xs text-gray-300 mt-1">Oshpazlarimiz taomingizni tayyorlashni boshladi.</p>
+      </div>
+
+      <div class="bg-black/40 p-3 rounded-2xl border border-brand-border text-left text-xs space-y-1.5">
+        <div class="flex justify-between"><span class="text-gray-400">Buyurtma ID:</span><span id="recId" class="font-bold text-white">#0000</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">Mijoz:</span><span id="recName" class="font-semibold text-white">-</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">Telefon:</span><span id="recPhone" class="font-semibold text-white">-</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">Manzil:</span><span id="recAddress" class="font-semibold text-amber-200">-</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">Chegirma:</span><span id="recDiscount" class="font-bold text-rose-400">0 so'm</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">To'lov (Naqd):</span><span id="recTotal" class="font-bold text-brand-gold">0 so'm</span></div>
+      </div>
+
+      <button onclick="closeReceiptModal()" class="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition">
+        Menyuga Qaytish (✕)
+      </button>
+    </div>
+  </div>
+
+  <!-- ADMIN LOGIN PAROL MODAL -->
+  <div id="adminLoginModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-brand-card rounded-3xl border border-brand-border p-6 shadow-2xl space-y-4 relative">
+      <button onclick="closeAdminLoginModal()" title="Yopish (X)" class="absolute top-4 right-4 p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-brand-gold/10 border border-brand-gold/30 text-brand-gold flex items-center justify-center mx-auto mb-2">
+          <i data-lucide="lock" class="w-6 h-6"></i>
+        </div>
+        <h3 class="font-serif font-bold text-lg text-white">Admin Tizimiga Kirish</h3>
+        <p class="text-xs text-gray-400">Shahzoda Restarani Boshqaruvi</p>
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs text-gray-300 font-semibold mb-1">Maxfiy Parol</label>
+          <input type="password" id="adminPasswordInput" required placeholder="Parolni kiriting..." class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-brand-border text-white text-sm focus:border-brand-gold outline-none">
+        </div>
+        <p id="adminLoginError" class="text-xs text-rose-400 hidden">Parol noto'g'ri! Iltimos, qaytadan urinib ko'ring.</p>
+        <button type="submit" class="w-full py-3 rounded-xl gold-btn-gradient text-xs font-bold uppercase tracking-wider">
+          Kirish
+        </button>
+        <button type="button" onclick="closeAdminLoginModal()" class="w-full py-2 text-xs text-gray-400 hover:text-white">
+          Bekor qilish (✕)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN BOSHQARUV PANELI -->
+  <section id="admin-view" class="hidden flex-1 max-w-7xl mx-auto px-4 py-4 w-full">
+    <div class="flex items-center justify-between pb-4 border-b border-brand-border mb-4">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
+        <h2 class="font-serif font-bold text-lg md:text-xl text-white">Shahzoda Admin Suite</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="switchTab('client-view')" class="px-3 py-1.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-xs text-gray-300 flex items-center gap-1.5">
+          <i data-lucide="eye" class="w-4 h-4 text-brand-gold"></i>
+          <span>Mijoz Ko'rinishi</span>
+        </button>
+        <button onclick="switchTab('client-view')" title="Admin panelni yopish (X)" class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-300 hover:text-rose-400 border border-white/10 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs text-rose-300 flex items-center gap-1.5">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+          <span>Chiqish</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ADMIN TABLAR -->
+    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-2 mb-4">
+      <button onclick="setAdminTab('finance')" class="adm-tab px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-gold text-brand-dark" data-tab="finance">
+        📊 1. Moliya & Tushum
+      </button>
+      <button onclick="setAdminTab('stock')" class="adm-tab px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-card border border-brand-border text-gray-300" data-tab="stock">
+        📦 2. Mahsulotlar & Ombor Soni
+      </button>
+      <button onclick="setAdminTab('orders')" class="adm-tab px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-card border border-brand-border text-gray-300" data-tab="orders">
+        📋 3. Buyurtmalar
+      </button>
+    </div>
+
+    <!-- TAB 1: MOLIYA -->
+    <div id="adm-finance" class="space-y-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+          <p class="text-xs text-gray-400">Bugungi Tushum</p>
+          <h4 id="statDailyRevenue" class="text-lg md:text-xl font-bold text-emerald-400 mt-1">0 so'm</h4>
+        </div>
+        <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+          <p class="text-xs text-gray-400">Bugungi Chiqim</p>
+          <h4 id="statDailyExpense" class="text-lg md:text-xl font-bold text-rose-400 mt-1">0 so'm</h4>
+        </div>
+        <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+          <p class="text-xs text-gray-400">Bugungi Sof Foyda</p>
+          <h4 id="statDailyProfit" class="text-lg md:text-xl font-bold text-brand-gold mt-1">0 so'm</h4>
+        </div>
+        <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+          <p class="text-xs text-gray-400">Oylik Sof Foyda</p>
+          <h4 id="statMonthlyProfit" class="text-lg md:text-xl font-bold text-blue-400 mt-1">0 so'm</h4>
+        </div>
+      </div>
+
+      <!-- CHIQIM QO'SHISH -->
+      <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+        <h4 class="font-serif font-bold text-sm text-white mb-3 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-rose-400"></i> Yangi Chiqim / Xarajat Kiritish
+        </h4>
+        <form onsubmit="addExpense(event)" class="grid grid-cols-1 md:grid-cols-4 gap-2">
+          <input type="text" id="expDesc" required placeholder="Xarajat sababi (Go'sht, Yog', Gaz...)" class="px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none">
+          <input type="number" id="expAmount" required placeholder="Summasi (so'mda)" class="px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none">
+          <select id="expCategory" class="px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none">
+            <option value="Mahsulotlar">Go'sht & Mahsulotlar</option>
+            <option value="Ish haqi">Ish haqi & Oshpazlar</option>
+            <option value="Ijara & Gaz">Ijara & Kommunal</option>
+            <option value="Kuryer & Yoqilg'i">Kuryer / Yoqilg'i</option>
+            <option value="Boshqa">Boshqa xarajat</option>
+          </select>
+          <button type="submit" class="py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs">
+            + Chiqim Qo'shish
+          </button>
+        </form>
+      </div>
+
+      <div class="bg-brand-card p-4 rounded-2xl border border-brand-border">
+        <h4 class="font-serif font-bold text-sm text-white mb-3">Xarajatlar Tarixi</h4>
+        <div id="expenseList" class="space-y-2 max-h-60 overflow-y-auto custom-scroll text-xs"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MAHSULOTLAR & OMBOR (CRUD) -->
+    <div id="adm-stock" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <h4 class="font-serif font-bold text-sm text-white">Taomlar Menyusi & Mavjud Porsiyalar</h4>
+        <button onclick="openDishModal()" class="px-3 py-2 rounded-xl gold-btn-gradient text-xs font-bold flex items-center gap-1.5">
+          <i data-lucide="plus" class="w-4 h-4"></i> Yangi Taom Qo'shish
+        </button>
+      </div>
+
+      <div id="adminDishesTable" class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden"></div>
+    </div>
+
+    <!-- TAB 3: BUYURTMALAR -->
+    <div id="adm-orders" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <h4 class="font-serif font-bold text-sm text-white">Kelib Tushgan Buyurtmalar</h4>
+        <span id="adminOrdersCount" class="text-xs text-brand-gold font-bold">0 ta buyurtma</span>
+      </div>
+      <div id="adminOrdersList" class="space-y-3"></div>
+    </div>
+  </section>
+
+  <!-- TAOM QO'SHISH / TAHRIRLASH MODALI -->
+  <div id="dishModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-3">
+    <div class="w-full max-w-md bg-brand-card rounded-3xl border border-brand-border p-5 space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-brand-border pb-3">
+        <h3 id="dishModalTitle" class="font-serif font-bold text-base text-white">Yangi Taom Qo'shish</h3>
+        <button onclick="closeDishModal()" title="Yopish (X)" class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 border border-white/10 transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="dishForm" onsubmit="saveDishForm(event)" class="space-y-3">
+        <input type="hidden" id="dishEditId">
+        
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">Taom Nomi *</label>
+          <input type="text" id="dishNameInput" required placeholder="Taom nomini kiriting" class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs text-gray-300 mb-1">Narxi (so'mda) *</label>
+            <input type="number" id="dishPriceInput" required placeholder="35000" class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+          </div>
+          <div>
+            <label class="block text-xs text-gray-300 mb-1">Porsiya Soni (Omborda) *</label>
+            <input type="number" id="dishStockInput" required placeholder="20" class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">Kategoriya *</label>
+          <select id="dishCatInput" required class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+            <option value="1-taom">1-Taomlar (Sho'rvalar)</option>
+            <option value="2-taom">2-Taomlar & Kaboblar</option>
+            <option value="salat">Salatlar</option>
+            <option value="ichimlik">Ichimliklar & Non</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">Rasm Havolasi (URL)</label>
+          <input type="text" id="dishImageInput" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+        </div>
+
+        <div>
+          <label class="block text-xs text-gray-300 mb-1">Taom haqida qisqacha ma'lumot</label>
+          <input type="text" id="dishDescInput" placeholder="Masalliqlar va tayyorlanishi haqida..." class="w-full px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold">
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-xl gold-btn-gradient text-xs font-bold uppercase tracking-wider">
+          Saqlash (Avtomatik yangilanadi)
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MOBIL PASTKI MENYU -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0A0B0E]/95 backdrop-blur-lg border-t border-brand-border px-4 py-2 flex items-center justify-around">
+    <button onclick="switchTab('client-view')" class="flex flex-col items-center gap-1 text-brand-gold">
+      <i data-lucide="utensils" class="w-5 h-5"></i>
+      <span class="text-[10px] font-bold">Menyu</span>
+    </button>
+    <button onclick="toggleCart(true)" class="relative flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+      <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+      <span class="text-[10px] font-bold">Savatcha</span>
+      <span id="bottomCartBadge" class="absolute -top-1 -right-2 w-4 h-4 rounded-full bg-brand-gold text-brand-dark text-[10px] font-bold flex items-center justify-center">0</span>
+    </button>
+    <button onclick="openAdminModal()" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+      <i data-lucide="shield" class="w-5 h-5"></i>
+      <span class="text-[10px] font-bold">Admin</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
