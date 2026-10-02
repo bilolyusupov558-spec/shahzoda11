@@ -34,6 +34,14 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- SUPABASE JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('sh_theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
 </head>
 <body class="min-h-screen flex flex-col justify-between overflow-x-hidden pb-44">
   <!-- ASOSIY HEADER -->
@@ -72,6 +80,11 @@
           <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
           <span class="hidden md:inline text-xs font-semibold">Savatcha</span>
           <span id="headerCartCount" class="w-5 h-5 rounded-full bg-brand-gold text-brand-dark text-xs font-bold flex items-center justify-center">0</span>
+        </button>
+
+        <!-- MAVZU ALMASHTIRGICH (LIGHT / DARK) -->
+        <button onclick="toggleTheme()" id="themeToggleBtn" title="Rejimni almashtirish (☀️ Light / 🌙 Dark)" class="p-2 sm:p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-amber-300 hover:text-white transition flex items-center justify-center">
+          <span id="themeIcon" class="text-sm select-none">☀️</span>
         </button>
 
         <button onclick="openAdminModal()" class="p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-brand-gold transition flex items-center gap-2">

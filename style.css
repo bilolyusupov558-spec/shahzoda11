@@ -58,3 +58,123 @@ body {
   color: #0A0B0E;
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
 }
+
+/* ==========================================
+   ☀️ LIGHT MODE (YORUG' MAVZU) STILLARI
+   ========================================== */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #F8F9FB !important;
+  color: #1E293B !important;
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.94) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+html.light .bg-brand-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+html.light .bg-brand-card:hover {
+  border-color: rgba(212, 175, 55, 0.6) !important;
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.12);
+}
+
+html.light .border-brand-border,
+html.light [class*="border-brand-border"] {
+  border-color: #E2E8F0 !important;
+}
+
+html.light .text-white {
+  color: #0F172A !important;
+}
+
+html.light .text-gray-300,
+html.light .text-gray-400 {
+  color: #475569 !important;
+}
+
+html.light .text-gray-500 {
+  color: #64748B !important;
+}
+
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+html.light nav {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.04);
+}
+
+html.light footer {
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.03)) !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Modallar */
+html.light #cartModal > div,
+html.light #checkoutModal > div,
+html.light #myOrdersModal > div,
+html.light #adminLoginModal > div,
+html.light #dishModal > div,
+html.light #receiptModal > div {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+html.light .bg-black,
+html.light .bg-black\/30,
+html.light .bg-black\/40,
+html.light .bg-black\/50,
+html.light .bg-black\/60,
+html.light .bg-black\/70,
+html.light .bg-black\/80 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light .bg-white\/5,
+html.light .bg-white\/10 {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html.light .cat-pill:not(.active) {
+  background-color: #FFFFFF !important;
+  color: #475569 !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light .cat-pill:not(.active):hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html.light table thead {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+}
+
+html.light table tbody tr:hover {
+  background-color: rgba(212, 175, 55, 0.05) !important;
+}

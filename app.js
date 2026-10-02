@@ -133,6 +133,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 2. Keshdan tezkor ma'lumotlarni yuklab ekranga chiqarish
+  initTheme();
   initContactInfo();
   loadStorageData();
   updateSupabaseStatusUI();
@@ -152,6 +153,38 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
   }
 });
+
+// ==========================================
+// ☀️ LIGHT / 🌙 DARK MAVZU BOSHQARUVI
+// ==========================================
+function initTheme() {
+  const savedTheme = localStorage.getItem('sh_theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+  }
+  updateThemeUI();
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  const newTheme = isLight ? 'light' : 'dark';
+  localStorage.setItem('sh_theme', newTheme);
+  updateThemeUI();
+}
+
+function updateThemeUI() {
+  const isLight = document.documentElement.classList.contains('light');
+  const iconEl = document.getElementById('themeIcon');
+  const btnEl = document.getElementById('themeToggleBtn');
+  if (iconEl) {
+    iconEl.innerText = isLight ? '🌙' : '☀️';
+  }
+  if (btnEl) {
+    btnEl.title = isLight ? "Qorong'i rejimga o'tish (🌙 Dark)" : "Yorug' rejimga o'tish (☀️ Light)";
+  }
+}
 
 function initContactInfo() {
   const phone = window.ENV?.RESTAURANT_PHONE || "+998 90 123 45 67";
