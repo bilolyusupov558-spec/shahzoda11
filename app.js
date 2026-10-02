@@ -1,9 +1,9 @@
-// Qat'iy o'zgarmas Admin paroli
-const FIXED_ADMIN_PASS = "bahrom12";
+// Sozlamalarni config.js dan olamiz (agar topilmasa, zaxira qiymatlar)
+const FIXED_ADMIN_PASS = window.ENV?.ADMIN_PASSWORD || "bahrom12";
 let isAdminLoggedIn = false;
 
 // Promokodlar va summalari
-const FIXED_PROMOS = {
+const FIXED_PROMOS = window.ENV?.PROMOS || {
   "BAHROM": 10000,
   "SHAHZODA": 12000,
   "FARANGIZ": 8000,
@@ -119,13 +119,105 @@ function getRawPhoneDigits(phoneValue) {
   return digits;
 }
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  // 1. Supabase mijozini ishga tushirish
+  if (window.DB && typeof window.DB.init === 'function') {
+    window.DB.init();
+  }
+
+  // 2. Keshdan tezkor ma'lumotlarni yuklab ekranga chiqarish
+  initHeaderPhone();
   loadStorageData();
+  updateSupabaseStatusUI();
   renderDishes();
   renderCart();
   updateStats();
   safeCreateIcons();
+
+  // 3. Supabase bilan to'liq sinxronizatsiya
+  await syncFromSupabase();
+
+  // 4. Realtime o'zgarishlarga obuna bo'lish
+  if (window.DB && typeof window.DB.subscribe === 'function') {
+    window.DB.subscribe(() => {
+      syncFromSupabase();
+    });
+  }
 });
+
+function initHeaderPhone() {
+  const phone = window.ENV?.RESTAURANT_PHONE || "+998 90 123 45 67";
+  const cleanPhone = phone.replace(/[^\d+]/g, '');
+  const linkEl = document.getElementById('headerPhoneLink');
+  const textEl = document.getElementById('headerPhoneText');
+  if (linkEl) linkEl.href = `tel:${cleanPhone}`;
+  if (textEl) textEl.innerText = phone;
+}
+
+function updateSupabaseStatusUI() {
+  const badge = document.getElementById('supabaseStatusBadge');
+  if (!badge) return;
+  if (window.DB && window.DB.isConfigured()) {
+    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1';
+    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> Supabase: Ulangan`;
+  } else {
+    badge.className = 'text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
+    badge.innerText = '🟠 Supabase: Lokal rejim';
+  }
+}
+
+async function syncFromSupabase() {
+  if (!window.DB || !window.DB.isConfigured()) return;
+
+  try {
+    // Taomlarni olish
+    const dbDishes = await window.DB.getDishes();
+    if (dbDishes) {
+      if (dbDishes.length === 0 && dishes.length > 0) {
+        for (const d of dishes) {
+          await window.DB.upsertDish(d);
+        }
+      } else if (dbDishes.length > 0) {
+        dishes = dbDishes;
+        localStorage.setItem('sh_dishes', JSON.stringify(dishes));
+      }
+    }
+
+    // Buyurtmalarni olish
+    const dbOrders = await window.DB.getOrders();
+    if (dbOrders) {
+      orders = dbOrders;
+      localStorage.setItem('sh_orders', JSON.stringify(orders));
+    }
+
+    // Xarajatlarni olish
+    const dbExpenses = await window.DB.getExpenses();
+    if (dbExpenses) {
+      expenses = dbExpenses;
+      localStorage.setItem('sh_expenses', JSON.stringify(expenses));
+    }
+
+    // Ishlatilgan promokod telefonlarini olish
+    const dbPhones = await window.DB.getUsedPhones();
+    if (dbPhones) {
+      usedPromoPhones = dbPhones;
+      localStorage.setItem('sh_used_phones', JSON.stringify(usedPromoPhones));
+    }
+
+    renderDishes();
+    renderCart();
+    if (isAdminLoggedIn) {
+      renderAdminDishes();
+      renderAdminOrders();
+      renderExpenses();
+      updateStats();
+    }
+    updateSupabaseStatusUI();
+    safeCreateIcons();
+  } catch (err) {
+    console.error("Supabase sinxronlashda xatolik:", err);
+  }
+}
 
 function loadStorageData() {
   try {
@@ -164,6 +256,7 @@ function reloadAllState() {
     renderExpenses();
     updateStats();
   }
+  updateSupabaseStatusUI();
   safeCreateIcons();
 }
 
@@ -516,6 +609,20 @@ function submitOrder(event) {
   orders.unshift(newOrder);
   localStorage.setItem('sh_orders', JSON.stringify(orders));
 
+  // Supabase bulut bazasiga saqlash
+  if (window.DB && window.DB.isConfigured()) {
+    window.DB.insertOrder(newOrder);
+    cart.forEach(cartItem => {
+      const dish = dishes.find(d => d.id === cartItem.id);
+      if (dish) {
+        window.DB.updateDishStock(dish.id, dish.stock);
+      }
+    });
+    if (appliedPromo.code && appliedPromo.discount > 0) {
+      window.DB.insertUsedPhone(rawDigits);
+    }
+  }
+
   cart = [];
   appliedPromo = { code: null, discount: 0 };
   localStorage.removeItem('sh_cart');
@@ -676,6 +783,9 @@ function quickStockChange(dishId, delta) {
   if (dish) {
     dish.stock = Math.max(0, dish.stock + delta);
     localStorage.setItem('sh_dishes', JSON.stringify(dishes));
+    if (window.DB && window.DB.isConfigured()) {
+      window.DB.updateDishStock(dish.id, dish.stock);
+    }
     broadcastChange();
   }
 }
@@ -717,6 +827,9 @@ function deleteDish(id) {
   if (confirm("Haqiqatan ham ushbu taomni menyudan o'chirmoqchimisiz?")) {
     dishes = dishes.filter(d => d.id !== id);
     localStorage.setItem('sh_dishes', JSON.stringify(dishes));
+    if (window.DB && window.DB.isConfigured()) {
+      window.DB.deleteDish(id);
+    }
     broadcastChange();
   }
 }
@@ -733,20 +846,25 @@ function saveDishForm(e) {
 
   if (!name) return;
 
+  let savedDish = null;
   if (id) {
     const index = dishes.findIndex(d => d.id === id);
     if (index !== -1) {
       dishes[index] = { ...dishes[index], name, price, stock, category, img, desc };
+      savedDish = dishes[index];
     }
   } else {
-    const newDish = {
+    savedDish = {
       id: 'd_' + Date.now(),
       name, price, stock, category, img, desc
     };
-    dishes.push(newDish);
+    dishes.push(savedDish);
   }
 
   localStorage.setItem('sh_dishes', JSON.stringify(dishes));
+  if (window.DB && window.DB.isConfigured() && savedDish) {
+    window.DB.upsertDish(savedDish);
+  }
   closeDishModal();
   broadcastChange();
 }
@@ -804,6 +922,9 @@ function updateOrderStatus(orderId, newStatus) {
   if (ord) {
     ord.status = newStatus;
     localStorage.setItem('sh_orders', JSON.stringify(orders));
+    if (window.DB && window.DB.isConfigured()) {
+      window.DB.updateOrderStatus(orderId, newStatus);
+    }
     broadcastChange();
   }
 }
@@ -831,6 +952,9 @@ function addExpense(e) {
 
   expenses.unshift(newExp);
   localStorage.setItem('sh_expenses', JSON.stringify(expenses));
+  if (window.DB && window.DB.isConfigured()) {
+    window.DB.insertExpense(newExp);
+  }
 
   if (descInput) descInput.value = '';
   if (amountInput) amountInput.value = '';
@@ -865,6 +989,9 @@ function renderExpenses() {
 function deleteExpense(expId) {
   expenses = expenses.filter(e => e.id !== expId);
   localStorage.setItem('sh_expenses', JSON.stringify(expenses));
+  if (window.DB && window.DB.isConfigured()) {
+    window.DB.deleteExpense(expId);
+  }
   broadcastChange();
 }
 
