@@ -60,33 +60,49 @@ function safeCreateIcons() {
   }
 }
 
-// QAT'IY TELEFON RAQAM FORMATLASH VA NAZORATI:
+// QAT'IY TELEFON RAQAM FORMATLASH, TAHRIRLASH (EDIT) VA NAZORATI:
 function handlePhoneInput(input) {
   if (!input) return;
-  let digits = input.value.replace(/\D/g, '');
 
+  const oldVal = input.value;
+  const oldCursor = input.selectionStart || 0;
+
+  // Kursorgacha bo'lgan sof raqamlar soni (+998 dan tashqari)
+  const textBeforeCursor = oldVal.substring(0, oldCursor);
+  let digitsBeforeCursor = textBeforeCursor.replace(/\D/g, '');
+  if (digitsBeforeCursor.startsWith('998')) {
+    digitsBeforeCursor = digitsBeforeCursor.substring(3);
+  }
+  const digitCursorCount = digitsBeforeCursor.length;
+
+  // Barcha kiritilgan 9 ta raqam
+  let digits = oldVal.replace(/\D/g, '');
   if (digits.startsWith('998')) {
     digits = digits.substring(3);
   }
-
   digits = digits.substring(0, 9);
 
-  const counterEl = document.getElementById('phoneDigitCounter');
-  const errEl = document.getElementById('phoneErrorMsg');
-  
-  if (counterEl) {
-    counterEl.innerText = `${digits.length} / 9 raqam`;
-    if (digits.length === 9) {
-      counterEl.className = 'text-emerald-400 font-mono text-[10px] font-bold';
-      if (errEl) errEl.classList.add('hidden');
-    } else {
-      counterEl.className = 'text-gray-400 font-mono text-[10px]';
+  // Faqat asosiy buyurtma oynasi uchun counter va xato xabari
+  if (input.id === 'custPhone') {
+    const counterEl = document.getElementById('phoneDigitCounter');
+    const errEl = document.getElementById('phoneErrorMsg');
+    if (counterEl) {
+      counterEl.innerText = `${digits.length} / 9 raqam`;
+      if (digits.length === 9) {
+        counterEl.className = 'text-emerald-400 font-mono text-[10px] font-bold';
+        if (errEl) errEl.classList.add('hidden');
+      } else {
+        counterEl.className = 'text-gray-400 font-mono text-[10px]';
+      }
     }
   }
 
+  // Formatlangan ko'rinish
   let formatted = '+998';
   if (digits.length > 0) {
     formatted += ' (' + digits.substring(0, 2);
+  } else {
+    formatted += ' ';
   }
   if (digits.length >= 2) {
     formatted += ') ';
@@ -108,6 +124,84 @@ function handlePhoneInput(input) {
   }
 
   input.value = formatted;
+
+  // Tahrirlash paytida kursorni to'g'ri o'rniga tiklash (oxiriga sakrab ketmasligi uchun):
+  let newCursor = 5;
+  if (digitCursorCount === 0) {
+    newCursor = 5;
+  } else {
+    let count = 0;
+    for (let i = 5; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) {
+        count++;
+      }
+      if (count === digitCursorCount) {
+        newCursor = i + 1;
+        while (newCursor < formatted.length && !/\d/.test(formatted[newCursor])) {
+          newCursor++;
+        }
+        break;
+      }
+    }
+  }
+
+  try {
+    input.setSelectionRange(newCursor, newCursor);
+  } catch (e) {}
+}
+
+// O'chirish (Backspace / Delete) paytida format belgilariga qotib qolmasdan erkin tahrirlash:
+function handlePhoneKeyDown(e, input) {
+  if (!input) return;
+
+  const start = input.selectionStart;
+  const end = input.selectionEnd;
+
+  if (e.key === 'Backspace') {
+    // Agar kursor +998 ichida bo'lsa, davlat kodini o'chirishga yo'l qo'ymaymiz
+    if (start <= 5 && end <= 5) {
+      e.preventDefault();
+      input.setSelectionRange(5, 5);
+      return;
+    }
+
+    // Agar matn belgilanmagan bo'lsa (oddiy bittalab o'chirish)
+    if (start === end) {
+      const charBefore = input.value[start - 1];
+      // Agar kursor oldidagi belgi raqam bo'lmasa (' ', ')', '-', '(')
+      if (charBefore && !/\d/.test(charBefore)) {
+        e.preventDefault();
+        let digitIndex = start - 1;
+        // Oldingi haqiqiy raqamni topamiz
+        while (digitIndex >= 5 && !/\d/.test(input.value[digitIndex])) {
+          digitIndex--;
+        }
+        if (digitIndex >= 5) {
+          const val = input.value;
+          input.value = val.substring(0, digitIndex) + val.substring(digitIndex + 1);
+          input.setSelectionRange(digitIndex, digitIndex);
+          handlePhoneInput(input);
+        }
+      }
+    }
+  } else if (e.key === 'Delete') {
+    if (start === end) {
+      const charAfter = input.value[start];
+      if (charAfter && !/\d/.test(charAfter)) {
+        e.preventDefault();
+        let digitIndex = start;
+        while (digitIndex < input.value.length && !/\d/.test(input.value[digitIndex])) {
+          digitIndex++;
+        }
+        if (digitIndex < input.value.length) {
+          const val = input.value;
+          input.value = val.substring(0, digitIndex) + val.substring(digitIndex + 1);
+          input.setSelectionRange(start, start);
+          handlePhoneInput(input);
+        }
+      }
+    }
+  }
 }
 
 function handlePhoneFocus(input) {
@@ -115,6 +209,23 @@ function handlePhoneFocus(input) {
   if (!input.value || input.value.trim() === '' || input.value.trim() === '+998') {
     input.value = '+998 ';
   }
+  setTimeout(() => {
+    try {
+      if (input.selectionStart < 5) {
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    } catch (e) {}
+  }, 10);
+}
+
+function handlePhoneClick(input) {
+  if (!input) return;
+  try {
+    if (input.selectionStart < 5) {
+      const pos = input.value.length < 5 ? input.value.length : 5;
+      input.setSelectionRange(pos, pos);
+    }
+  } catch (e) {}
 }
 
 function getRawPhoneDigits(phoneValue) {
