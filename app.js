@@ -110,6 +110,13 @@ function handlePhoneInput(input) {
   input.value = formatted;
 }
 
+function handlePhoneFocus(input) {
+  if (!input) return;
+  if (!input.value || input.value.trim() === '' || input.value.trim() === '+998') {
+    input.value = '+998 ';
+  }
+}
+
 function getRawPhoneDigits(phoneValue) {
   if (!phoneValue) return '';
   let digits = phoneValue.replace(/\D/g, '');
@@ -548,10 +555,18 @@ function openCheckoutModal() {
   if (promoInp) promoInp.value = '';
   if (msgEl) msgEl.classList.add('hidden');
   if (errEl) errEl.classList.add('hidden');
-  if (phoneInp) phoneInp.value = '';
-  if (counterEl) {
-    counterEl.innerText = '0 / 9 raqam';
-    counterEl.className = 'text-gray-400 font-mono text-[10px]';
+  if (phoneInp) {
+    const savedPhone = localStorage.getItem('sh_last_phone') || '';
+    if (savedPhone && savedPhone.length === 9) {
+      phoneInp.value = savedPhone;
+      handlePhoneInput(phoneInp);
+    } else {
+      phoneInp.value = '+998 ';
+      if (counterEl) {
+        counterEl.innerText = '0 / 9 raqam';
+        counterEl.className = 'text-gray-400 font-mono text-[10px]';
+      }
+    }
   }
 
   updateCheckoutTotals();

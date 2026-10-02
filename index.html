@@ -288,17 +288,23 @@
 
         <!-- TELEFON RAQAM BO'LIMI: AVTOMATIK MASKALANGAN -->
         <div>
-          <label class="block text-xs font-semibold text-gray-300 mb-1">Telefon Raqamingiz *</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-gray-300">Telefon Raqamingiz *</label>
+            <span class="text-[11px] text-amber-300 font-semibold flex items-center gap-1">
+              <i data-lucide="phone-call" class="w-3 h-3 text-brand-gold"></i>
+              <span>Namuna: +998 (90) 123-45-67</span>
+            </span>
+          </div>
           <div class="relative">
-            <input type="tel" id="custPhone" required placeholder="+998 (90) 123-45-67" maxlength="19" oninput="handlePhoneInput(this)" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-brand-border text-white text-sm focus:border-brand-gold outline-none font-mono tracking-wide">
+            <input type="tel" id="custPhone" required placeholder="+998 (90) 123-45-67" value="+998 " maxlength="19" oninput="handlePhoneInput(this)" onfocus="handlePhoneFocus(this)" class="w-full px-3.5 py-2.5 rounded-xl bg-black/60 border border-brand-border text-white text-sm focus:border-brand-gold outline-none font-mono tracking-wide placeholder-gray-500">
           </div>
           <div class="mt-1.5 p-2 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-[11px]">
-            <span class="text-amber-300 font-semibold flex items-center gap-1">
-              <i data-lucide="phone-call" class="w-3.5 h-3.5 text-brand-gold"></i> Namuna: +998 (90) 123-45-67
+            <span class="text-gray-300 flex items-center gap-1.5">
+              <span>🇺🇿 O'zbekiston kodi: <strong class="text-brand-gold">+998</strong> (9 ta raqam)</span>
             </span>
             <span id="phoneDigitCounter" class="text-gray-400 font-mono text-[10px]">0 / 9 raqam</span>
           </div>
-          <p id="phoneErrorMsg" class="text-[11px] text-rose-400 mt-1 hidden font-medium">Telefon raqam to'liq kiritilishi shart (9 ta raqam bo'lishi kerak)!</p>
+          <p id="phoneErrorMsg" class="text-[11px] text-rose-400 mt-1 hidden font-medium">Iltimos, telefon raqamingizni to'liq 9 ta raqamini kiriting!</p>
         </div>
 
         <!-- PROMOKOD BO'LIMI -->
@@ -619,7 +625,7 @@
       <div class="py-3 border-b border-brand-border/60">
         <label class="block text-[11px] text-gray-400 mb-1">Buyurtmani telefon raqam bo'yicha topish:</label>
         <div class="flex gap-2">
-          <input type="text" id="myOrdersPhoneFilter" placeholder="Masalan: 901234567" class="flex-1 px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold font-mono">
+          <input type="tel" id="myOrdersPhoneFilter" placeholder="+998 (90) 123-45-67" maxlength="19" oninput="handlePhoneInput(this)" onfocus="handlePhoneFocus(this)" class="flex-1 px-3 py-2 rounded-xl bg-black border border-brand-border text-xs text-white outline-none focus:border-brand-gold font-mono">
           <button type="button" onclick="filterMyOrdersByPhone()" class="px-3.5 py-2 rounded-xl gold-btn-gradient text-xs font-bold whitespace-nowrap">
             Qidirish
           </button>
