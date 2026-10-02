@@ -422,38 +422,38 @@ function renderDishes() {
     const isOutOfStock = dish.stock <= 0;
 
     return `
-      <div class="bg-brand-card rounded-2xl md:rounded-3xl border border-brand-border overflow-hidden flex flex-col justify-between hover:border-brand-gold/40 transition group">
+      <div class="bg-brand-card rounded-2xl md:rounded-3xl border border-brand-border overflow-hidden flex flex-col justify-between hover:border-brand-gold/40 transition group shadow-lg">
         <div class="relative aspect-video w-full overflow-hidden bg-black/40">
           <img src="${dish.img || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80'}" alt="${dish.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-          <div class="absolute top-2 right-2">
+          <div class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
             ${isOutOfStock 
-              ? `<span class="px-2 py-0.5 rounded-full bg-rose-500/90 text-white text-[10px] font-bold">Tugagan</span>`
-              : `<span class="px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 text-[10px] font-semibold">${dish.stock} ta qoldi</span>`
+              ? `<span class="px-2 py-0.5 rounded-full bg-rose-500/90 text-white text-[9px] sm:text-[10px] font-bold">Tugagan</span>`
+              : `<span class="px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md border border-white/10 text-amber-300 text-[9px] sm:text-[10px] font-semibold">${dish.stock} ta qoldi</span>`
             }
           </div>
         </div>
 
-        <div class="p-3 md:p-4 flex-1 flex flex-col justify-between">
+        <div class="p-2.5 sm:p-3 md:p-4 flex-1 flex flex-col justify-between">
           <div>
-            <h4 class="font-bold text-white text-xs md:text-sm line-clamp-1 mb-1">${dish.name}</h4>
-            <p class="text-[11px] text-gray-400 line-clamp-2 leading-relaxed mb-3">${dish.desc || ''}</p>
+            <h4 class="font-bold text-white text-xs sm:text-sm line-clamp-1 mb-0.5 sm:mb-1">${dish.name}</h4>
+            <p class="text-[10px] sm:text-[11px] text-gray-400 line-clamp-2 leading-relaxed mb-2 sm:mb-3">${dish.desc || ''}</p>
           </div>
 
-          <div class="flex items-center justify-between pt-2 border-t border-brand-border/60">
-            <span class="font-extrabold text-brand-gold text-xs md:text-sm">${dish.price.toLocaleString()} so'm</span>
+          <div class="flex items-center justify-between pt-2 border-t border-brand-border/60 gap-1">
+            <span class="font-extrabold text-brand-gold text-[11px] sm:text-xs md:text-sm truncate">${dish.price.toLocaleString()} so'm</span>
 
             ${isOutOfStock 
-              ? `<button disabled class="p-2 rounded-xl bg-gray-800 text-gray-500 text-xs cursor-not-allowed">Yo'q</button>`
+              ? `<button disabled class="px-2 py-1 rounded-xl bg-gray-800 text-gray-500 text-[11px] cursor-not-allowed">Yo'q</button>`
               : inCartCount > 0 
                 ? `
-                  <div class="flex items-center gap-1.5 bg-black/80 border border-brand-gold/50 rounded-xl px-1.5 py-1">
-                    <button onclick="changeQty('${dish.id}', -1)" class="w-5 h-5 flex items-center justify-center text-brand-gold hover:text-white font-bold text-sm">-</button>
-                    <span class="text-xs font-bold text-white px-1">${inCartCount}</span>
-                    <button onclick="changeQty('${dish.id}', 1)" class="w-5 h-5 flex items-center justify-center text-brand-gold hover:text-white font-bold text-sm">+</button>
+                  <div class="flex items-center gap-1 bg-black/80 border border-brand-gold/50 rounded-xl px-1 sm:px-1.5 py-0.5 sm:py-1 shrink-0">
+                    <button onclick="changeQty('${dish.id}', -1)" class="w-5 h-5 flex items-center justify-center text-brand-gold hover:text-white font-bold text-xs sm:text-sm">-</button>
+                    <span class="text-[11px] sm:text-xs font-bold text-white px-0.5">${inCartCount}</span>
+                    <button onclick="changeQty('${dish.id}', 1)" class="w-5 h-5 flex items-center justify-center text-brand-gold hover:text-white font-bold text-xs sm:text-sm">+</button>
                   </div>
                 `
                 : `
-                  <button onclick="addToCart('${dish.id}')" class="px-2.5 py-1.5 rounded-xl gold-btn-gradient text-xs font-bold flex items-center gap-1">
+                  <button onclick="addToCart('${dish.id}')" class="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl gold-btn-gradient text-[11px] sm:text-xs font-bold flex items-center gap-1 shrink-0">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Qo'shish</span>
                   </button>

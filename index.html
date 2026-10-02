@@ -37,79 +37,83 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between overflow-x-hidden pb-8">
   <!-- ASOSIY HEADER -->
-  <header class="sticky top-0 z-40 bg-[#0A0B0E]/90 backdrop-blur-md border-b border-brand-border">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('client-view')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-goldDark to-brand-gold flex items-center justify-center text-brand-dark shadow-lg shadow-brand-gold/20 font-serif font-black text-xl">
+  <header class="sticky top-0 z-40 bg-[#0A0B0E]/95 backdrop-blur-md border-b border-brand-border">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2">
+      <!-- LOGO -->
+      <div class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" onclick="switchTab('client-view')">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-goldDark to-brand-gold flex items-center justify-center text-brand-dark shadow-lg shadow-brand-gold/20 font-serif font-black text-lg sm:text-xl">
           👑
         </div>
         <div>
-          <h1 class="font-serif font-bold text-lg md:text-xl tracking-wide gold-gradient-text leading-tight">SHAHZODA</h1>
-          <p class="text-[11px] text-amber-200/60 font-medium tracking-wider uppercase">Yakkabog' • Qashqadaryo</p>
+          <h1 class="font-serif font-bold text-base sm:text-lg md:text-xl tracking-wide gold-gradient-text leading-tight">SHAHZODA</h1>
+          <p class="text-[9px] sm:text-[11px] text-amber-200/60 font-medium tracking-wider uppercase">Yakkabog'</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 md:gap-3">
-        <!-- TELEFON RAQAM (ALOQA / BUYURTMA) -->
-        <a href="tel:+998901234567" id="headerPhoneLink" title="Qo'ng'iroq qilish" class="px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-white transition flex items-center gap-1.5 sm:gap-2 group shadow-sm">
+      <!-- HEADER TUGMALARI -->
+      <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+        <!-- TELEFON QO'NG'IROQ -->
+        <a href="tel:+998901234567" id="headerPhoneLink" title="Qo'ng'iroq qilish" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-white transition flex items-center gap-1.5 sm:gap-2 group shadow-sm">
           <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
             <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
           </div>
-          <div class="flex flex-col text-left leading-tight">
+          <div class="hidden sm:flex flex-col text-left leading-tight">
             <span class="text-[8px] sm:text-[9px] uppercase font-bold text-emerald-400 tracking-wider">Aloqa</span>
-            <span id="headerPhoneText" class="text-[11px] sm:text-xs font-mono font-bold text-white group-hover:text-emerald-300 transition">+998 90 123 45 67</span>
+            <span id="headerPhoneText" class="text-xs font-mono font-bold text-white group-hover:text-emerald-300 transition">+998 90 123 45 67</span>
           </div>
         </a>
 
         <!-- MIJOZ BUYURTMALARI TUGMASI -->
-        <button onclick="openMyOrdersModal()" class="relative p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-white transition flex items-center gap-1.5" title="Mening buyurtmalarim">
-          <i data-lucide="receipt" class="w-5 h-5 text-amber-400"></i>
-          <span class="hidden lg:inline text-xs font-semibold">Buyurtmalarim</span>
-          <span id="headerMyOrdersCount" class="w-5 h-5 rounded-full bg-amber-400 text-brand-dark text-xs font-bold flex items-center justify-center">0</span>
+        <button onclick="openMyOrdersModal()" class="relative p-2 sm:p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-white transition flex items-center justify-center" title="Mening buyurtmalarim">
+          <i data-lucide="receipt" class="w-4 h-4 sm:w-5 sm:h-5 text-amber-400"></i>
+          <span class="hidden lg:inline text-xs font-semibold ml-1.5">Buyurtmalarim</span>
+          <span id="headerMyOrdersCount" class="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-400 text-brand-dark text-[10px] sm:text-xs font-bold flex items-center justify-center shadow">0</span>
         </button>
 
-        <button onclick="toggleCart(true)" class="relative p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-white transition flex items-center gap-2">
-          <i data-lucide="shopping-bag" class="w-5 h-5 text-brand-gold"></i>
-          <span class="hidden md:inline text-xs font-semibold">Savatcha</span>
-          <span id="headerCartCount" class="w-5 h-5 rounded-full bg-brand-gold text-brand-dark text-xs font-bold flex items-center justify-center">0</span>
+        <!-- SAVATCHA -->
+        <button onclick="toggleCart(true)" class="relative p-2 sm:p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-white transition flex items-center justify-center" title="Savatcha">
+          <i data-lucide="shopping-bag" class="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold"></i>
+          <span class="hidden md:inline text-xs font-semibold ml-1.5">Savatcha</span>
+          <span id="headerCartCount" class="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-brand-gold text-brand-dark text-[10px] sm:text-xs font-bold flex items-center justify-center shadow">0</span>
         </button>
 
-        <button onclick="openAdminModal()" class="p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-brand-gold transition flex items-center gap-2">
-          <i data-lucide="shield" class="w-5 h-5"></i>
-          <span class="hidden md:inline text-xs font-semibold">Admin</span>
+        <!-- ADMIN -->
+        <button onclick="openAdminModal()" class="p-2 sm:p-2.5 rounded-xl bg-brand-card hover:bg-brand-cardHover border border-brand-border text-brand-gold transition flex items-center justify-center" title="Admin">
+          <i data-lucide="shield" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+          <span class="hidden md:inline text-xs font-semibold ml-1.5">Admin</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- ASOSIY MIJOZ SAHIFASI -->
-  <main id="client-view" class="flex-1 max-w-7xl mx-auto px-4 py-4 w-full">
+  <main id="client-view" class="flex-1 max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 w-full">
     <!-- RESTORAN DOIMIY BANNERI -->
-    <div class="relative rounded-3xl overflow-hidden border border-brand-border mb-6 bg-brand-card min-h-[240px] md:min-h-[320px] flex items-center justify-between shadow-2xl group">
+    <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-brand-border mb-5 sm:mb-6 bg-brand-card min-h-[200px] sm:min-h-[260px] md:min-h-[320px] flex items-center justify-between shadow-2xl group">
       <!-- Orqa fon rasmi: Hashamatli Shohona Restoran Zali ("Shahzoda" nomiga xos) -->
       <div class="absolute inset-0 w-full h-full z-0 overflow-hidden">
         <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85" alt="Shahzoda Restarani Hashamatli Zali" class="w-full h-full object-cover group-hover:scale-105 transition duration-700">
       </div>
       <!-- To'q qoramtir gradient -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/80 md:via-black/70 to-black/30 z-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/95 via-black/85 md:via-black/70 to-black/35 z-10"></div>
       
-      <div class="relative z-20 p-6 md:p-10 max-w-2xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-xs font-semibold mb-3 backdrop-blur-md">
+      <div class="relative z-20 p-4 sm:p-6 md:p-10 max-w-2xl">
+        <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-[10px] sm:text-xs font-semibold mb-2 sm:mb-3 backdrop-blur-md">
           <span class="animate-pulse">✨</span> Haqiqiy Yakkabog' Shohona Taomlari
         </div>
-        <h2 class="text-2xl md:text-4xl lg:text-5xl font-serif font-black gold-gradient-text mb-2 tracking-wide leading-tight">SHAHZODA RESTARANI</h2>
-        <p class="text-gray-200 text-xs md:text-sm mb-5 leading-relaxed font-medium">
+        <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-black gold-gradient-text mb-1.5 sm:mb-2 tracking-wide leading-tight">SHAHZODA RESTARANI</h2>
+        <p class="text-gray-200 text-[11px] sm:text-xs md:text-sm mb-3 sm:mb-5 leading-relaxed font-medium">
           Qashqadaryo viloyati, Yakkabog' tumani bo'ylab tezkor dastavka xizmati. Mazali qozon kabob, shashliklar va sarxil milliy taomlar.
         </p>
-        <div class="flex flex-wrap items-center gap-2 text-xs">
-          <span class="px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 font-semibold flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="banknote" class="w-4 h-4 text-emerald-400"></i> To'lov: Faqat Naqd
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
+          <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 font-semibold flex items-center gap-1 sm:gap-1.5 shadow-sm">
+            <i data-lucide="banknote" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400"></i> To'lov: Naqd
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-emerald-300 font-semibold flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="truck" class="w-4 h-4 text-amber-400"></i> Tezkor Dastavka (10 000 so'm)
+          <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-emerald-300 font-semibold flex items-center gap-1 sm:gap-1.5 shadow-sm">
+            <i data-lucide="truck" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400"></i> Dastavka (10 000 so'm)
           </span>
-          <span class="px-3 py-1.5 rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-blue-300 font-semibold flex items-center gap-1.5 shadow-sm">
-            <i data-lucide="map-pin" class="w-4 h-4 text-rose-400"></i> Yakkabog' Tumani
+          <span class="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-black/70 backdrop-blur-md border border-white/10 text-blue-300 font-semibold flex items-center gap-1 sm:gap-1.5 shadow-sm">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-400"></i> Yakkabog'
           </span>
         </div>
       </div>
@@ -135,10 +139,10 @@
     </div>
 
     <!-- TAOMLAR RO'YXATI -->
-    <div id="dishesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"></div>
+    <div id="dishesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5"></div>
 
     <!-- ASOSIY PASTKI MA'LUMOTLAR BO'LIMI (FOOTER) -->
-    <footer class="mt-14 pt-8 pb-6 border-t border-brand-border bg-gradient-to-b from-transparent to-black/70 rounded-3xl p-5 md:p-8">
+    <footer class="mt-10 sm:mt-14 pt-6 sm:pt-8 pb-6 border-t border-brand-border bg-gradient-to-b from-transparent to-black/70 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
         <!-- 1. Restoran haqida -->
         <div class="space-y-3">

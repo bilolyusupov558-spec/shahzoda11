@@ -58,3 +58,30 @@ body {
   color: #0A0B0E;
   box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
 }
+
+/* SMARTFON VA MOBIL QURILMALAR UCHUN MAXSUS MOSLASHUV */
+@media (max-width: 768px) {
+  /* iOS Safari avtomatik kattalashtirib (zoom) yubormasligi uchun 16px */
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Mobil sensorli aylantirish (smooth scroll) */
+  .hide-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* iPhone Notch va Home Indicator xavfsiz chegaralari (Safe Area) */
+body {
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+}
+
+button:active, a:active {
+  transform: scale(0.96);
+}
