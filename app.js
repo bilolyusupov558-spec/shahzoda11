@@ -126,9 +126,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   // 2. Keshdan tezkor ma'lumotlarni yuklab ekranga chiqarish
-  initHeaderPhone();
+  initContactInfo();
   loadStorageData();
   updateSupabaseStatusUI();
+  updateMyOrdersBadges();
   renderDishes();
   renderCart();
   updateStats();
@@ -145,13 +146,27 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-function initHeaderPhone() {
+function initContactInfo() {
   const phone = window.ENV?.RESTAURANT_PHONE || "+998 90 123 45 67";
   const cleanPhone = phone.replace(/[^\d+]/g, '');
-  const linkEl = document.getElementById('headerPhoneLink');
-  const textEl = document.getElementById('headerPhoneText');
-  if (linkEl) linkEl.href = `tel:${cleanPhone}`;
-  if (textEl) textEl.innerText = phone;
+
+  const hLink = document.getElementById('headerPhoneLink');
+  const hText = document.getElementById('headerPhoneText');
+  if (hLink) hLink.href = `tel:${cleanPhone}`;
+  if (hText) hText.innerText = phone;
+
+  const fLink = document.getElementById('footerPhoneLink');
+  const fText = document.getElementById('footerPhoneText');
+  if (fLink) fLink.href = `tel:${cleanPhone}`;
+  if (fText) fText.innerText = phone;
+
+  // Telegram
+  const tgRaw = window.ENV?.TELEGRAM_USERNAME || "shahzoda_restaran";
+  const tgUser = tgRaw.replace(/^@/, '');
+  const tgLink = document.getElementById('telegramLink');
+  const tgHandle = document.getElementById('telegramHandle');
+  if (tgLink) tgLink.href = `https://t.me/${tgUser}`;
+  if (tgHandle) tgHandle.innerText = `@${tgUser}`;
 }
 
 function updateSupabaseStatusUI() {
@@ -206,6 +221,11 @@ async function syncFromSupabase() {
 
     renderDishes();
     renderCart();
+    updateMyOrdersBadges();
+    const myModal = document.getElementById('myOrdersModal');
+    if (myModal && !myModal.classList.contains('hidden')) {
+      renderMyOrders();
+    }
     if (isAdminLoggedIn) {
       renderAdminDishes();
       renderAdminOrders();
@@ -250,6 +270,11 @@ function reloadAllState() {
   loadStorageData();
   renderDishes();
   renderCart();
+  updateMyOrdersBadges();
+  const myModal = document.getElementById('myOrdersModal');
+  if (myModal && !myModal.classList.contains('hidden')) {
+    renderMyOrders();
+  }
   if (isAdminLoggedIn) {
     renderAdminDishes();
     renderAdminOrders();
@@ -609,6 +634,16 @@ function submitOrder(event) {
   orders.unshift(newOrder);
   localStorage.setItem('sh_orders', JSON.stringify(orders));
 
+  // Mijozning o'z qurilmasiga buyurtmasini eslab qolish
+  try {
+    const myIds = JSON.parse(localStorage.getItem('sh_my_order_ids') || '[]');
+    myIds.unshift(orderId);
+    localStorage.setItem('sh_my_order_ids', JSON.stringify(myIds));
+    if (rawDigits) {
+      localStorage.setItem('sh_last_phone', rawDigits);
+    }
+  } catch (e) {}
+
   // Supabase bulut bazasiga saqlash
   if (window.DB && window.DB.isConfigured()) {
     window.DB.insertOrder(newOrder);
@@ -626,6 +661,7 @@ function submitOrder(event) {
   cart = [];
   appliedPromo = { code: null, discount: 0 };
   localStorage.removeItem('sh_cart');
+  updateMyOrdersBadges();
 
   broadcastChange();
 
@@ -1024,4 +1060,177 @@ function updateStats() {
   if (dExpEl) dExpEl.innerText = `${dailyExp.toLocaleString()} so'm`;
   if (dProfEl) dProfEl.innerText = `${(dailyRev - dailyExp).toLocaleString()} so'm`;
   if (mProfEl) mProfEl.innerText = `${(monthlyRev - monthlyExp).toLocaleString()} so'm`;
+}
+
+// ==========================================
+// MIJOZ BUYURTMALARINI KUZATISH (MY ORDERS)
+// ==========================================
+let myOrdersPhoneQuery = '';
+
+function openMyOrdersModal() {
+  const modal = document.getElementById('myOrdersModal');
+  if (!modal) return;
+
+  const savedPhone = localStorage.getItem('sh_last_phone') || '';
+  const input = document.getElementById('myOrdersPhoneFilter');
+  if (input && !myOrdersPhoneQuery && savedPhone) {
+    input.value = savedPhone;
+    myOrdersPhoneQuery = savedPhone;
+  }
+
+  renderMyOrders();
+  modal.classList.remove('hidden');
+  safeCreateIcons();
+}
+
+function closeMyOrdersModal() {
+  const modal = document.getElementById('myOrdersModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+function filterMyOrdersByPhone() {
+  const input = document.getElementById('myOrdersPhoneFilter');
+  if (!input) return;
+  const raw = getRawPhoneDigits(input.value.trim());
+  myOrdersPhoneQuery = raw;
+  if (raw) {
+    localStorage.setItem('sh_last_phone', raw);
+  }
+  renderMyOrders();
+}
+
+function resetMyOrdersFilter() {
+  myOrdersPhoneQuery = '';
+  const input = document.getElementById('myOrdersPhoneFilter');
+  if (input) input.value = '';
+  renderMyOrders();
+}
+
+function getClientMyOrders() {
+  let myIds = [];
+  try {
+    myIds = JSON.parse(localStorage.getItem('sh_my_order_ids') || '[]');
+  } catch (e) { myIds = []; }
+
+  // 1. Agar telefon bo'yicha filter kiritilgan bo'lsa
+  if (myOrdersPhoneQuery) {
+    return orders.filter(o => {
+      const ordDigits = o.customer?.rawDigits || getRawPhoneDigits(o.customer?.phone || '');
+      return ordDigits.includes(myOrdersPhoneQuery);
+    });
+  }
+
+  // 2. Ushbu brauzerdan berilgan buyurtmalar
+  if (myIds.length > 0) {
+    const list = orders.filter(o => myIds.includes(o.id));
+    if (list.length > 0) return list;
+  }
+
+  // 3. Agar hech qanday buyurtma bo'lmasa, bo'sh massiv
+  return [];
+}
+
+function updateMyOrdersBadges() {
+  const myOrders = getClientMyOrders();
+  const activeCount = myOrders.filter(o => o.status !== 'Yetkazildi').length;
+  const totalCount = myOrders.length;
+  const showCount = activeCount > 0 ? activeCount : totalCount;
+
+  const hBadge = document.getElementById('headerMyOrdersCount');
+  const bBadge = document.getElementById('bottomMyOrdersBadge');
+
+  if (hBadge) {
+    hBadge.innerText = showCount;
+    hBadge.classList.toggle('hidden', showCount === 0);
+  }
+  if (bBadge) {
+    bBadge.innerText = showCount;
+    bBadge.classList.toggle('hidden', showCount === 0);
+  }
+}
+
+function renderMyOrders() {
+  const list = document.getElementById('myOrdersList');
+  if (!list) return;
+
+  const myOrders = getClientMyOrders();
+  updateMyOrdersBadges();
+
+  if (myOrders.length === 0) {
+    list.innerHTML = `
+      <div class="py-8 text-center text-gray-400 space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-amber-400">
+          <i data-lucide="receipt" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <p class="font-bold text-white text-sm">Hozircha buyurtmalar topilmadi</p>
+          <p class="text-xs text-gray-500 mt-1 max-w-xs mx-auto">
+            Avval buyurtma bergan bo'lsangiz, yuqoridagi maydonga 9 xonali telefon raqamingizni kiritib "Qidirish" tugmasini bosing.
+          </p>
+        </div>
+        <button onclick="closeMyOrdersModal(); switchTab('client-view');" class="px-4 py-2 rounded-xl gold-btn-gradient text-xs font-bold uppercase tracking-wider">
+          Menyudan Taom Tanlash
+        </button>
+      </div>
+    `;
+    safeCreateIcons();
+    return;
+  }
+
+  list.innerHTML = myOrders.map(ord => {
+    let statusBg = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+    let statusIcon = 'clock';
+    let statusDesc = "Buyurtma qabul qilindi, navbatda kutilmoqda";
+
+    if (ord.status === 'Tayyorlanmoqda') {
+      statusBg = 'bg-blue-500/20 text-blue-300 border-blue-500/40';
+      statusIcon = 'utensils';
+      statusDesc = "Taomingiz oshpazlarimiz tomonidan pishirilmoqda";
+    } else if (ord.status === 'Kuryerda') {
+      statusBg = 'bg-purple-500/20 text-purple-300 border-purple-500/40';
+      statusIcon = 'truck';
+      statusDesc = "Kuryer taomni oldi va manzilingiz tomon yo'lga chiqdi";
+    } else if (ord.status === 'Yetkazildi') {
+      statusBg = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+      statusIcon = 'check-circle-2';
+      statusDesc = "Buyurtma muvaffaqiyatli topshirildi. Yoqimli ishtaha!";
+    }
+
+    const itemsSummary = (ord.items || []).map(i => `${i.name} (${i.qty}x)`).join(', ');
+
+    return `
+      <div class="bg-black/50 p-3.5 md:p-4 rounded-2xl border border-brand-border space-y-2.5 hover:border-brand-gold/40 transition">
+        <!-- Yuqori qator: ID va Holat -->
+        <div class="flex items-center justify-between border-b border-brand-border/60 pb-2">
+          <div>
+            <span class="font-bold text-white text-sm font-mono">${ord.id}</span>
+            <span class="text-[11px] text-gray-400 ml-2">
+              ${new Date(ord.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+            </span>
+          </div>
+          <span class="px-2.5 py-1 rounded-xl text-[11px] font-bold border flex items-center gap-1.5 ${statusBg}">
+            <i data-lucide="${statusIcon}" class="w-3.5 h-3.5"></i>
+            <span>${ord.status}</span>
+          </span>
+        </div>
+
+        <!-- Holat izohi (Realtime timeline) -->
+        <div class="p-2 rounded-xl bg-white/5 border border-white/5 text-[11px] text-gray-300 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full ${ord.status === 'Yetkazildi' ? 'bg-emerald-400' : 'bg-amber-400 animate-ping'} shrink-0"></span>
+          <span class="leading-tight">${statusDesc}</span>
+        </div>
+
+        <!-- Taomlar va summa -->
+        <div class="space-y-1 text-xs">
+          <p class="text-gray-400">Taomlar: <span class="text-white font-medium">${itemsSummary}</span></p>
+          <div class="flex justify-between items-center pt-1.5 border-t border-brand-border/40">
+            <span class="text-gray-400 text-[11px] truncate max-w-[200px]">Manzil: <strong class="text-amber-200 font-medium">${ord.address?.fullText || '-'}</strong></span>
+            <span class="font-bold text-brand-gold text-sm whitespace-nowrap">${(ord.total || 0).toLocaleString()} so'm</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  safeCreateIcons();
 }

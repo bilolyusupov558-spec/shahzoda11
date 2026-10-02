@@ -11,6 +11,9 @@ window.ENV = {
   // Restoran telefon raqami (Header va aloqa uchun)
   RESTAURANT_PHONE: "+998 90 123 45 67",
 
+  // Telegram manzili (bot, kanal yoki profil username)
+  TELEGRAM_USERNAME: "shahzoda_restaran",
+
   // Dastavka narxi
   DELIVERY_COST: 10000,
 
