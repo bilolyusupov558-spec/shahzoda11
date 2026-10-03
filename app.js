@@ -1031,7 +1031,46 @@ function saveDishForm(e) {
   broadcastChange();
 }
 
-// ADMIN BUYURTMALAR
+// BUYURTMA KUNI VA VAQTINI ANIQLASH (KUNI, OYI, YILI VA SOAT-DAQIQA):
+function formatOrderDateTime(dateStr) {
+  if (!dateStr) return { date: '-', time: '-', full: '-', badge: '-', dayLabel: '-' };
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return { date: dateStr, time: '', full: dateStr, badge: dateStr, dayLabel: dateStr };
+
+  const day = String(d.getDate()).padStart(2, '0');
+  const monthNum = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+
+  const monthNames = [
+    'yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
+    'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'
+  ];
+  const monthName = monthNames[d.getMonth()];
+
+  const now = new Date();
+  const isToday = d.toDateString() === now.toDateString();
+
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  const isYesterday = d.toDateString() === yesterday.toDateString();
+
+  let dayLabel = `${d.getDate()}-${monthName}`;
+  if (isToday) dayLabel = `Bugun (${d.getDate()}-${monthName})`;
+  else if (isYesterday) dayLabel = `Kecha (${d.getDate()}-${monthName})`;
+  else if (d.getFullYear() !== now.getFullYear()) dayLabel = `${d.getDate()}-${monthName}, ${year}`;
+
+  return {
+    date: `${day}.${monthNum}.${year}`,
+    time: `${hours}:${minutes}`,
+    dayLabel,
+    full: `${day}.${monthNum}.${year}, ${hours}:${minutes}`,
+    badge: `${dayLabel} • ${hours}:${minutes}`
+  };
+}
+
+// ADMIN BUYURTMALAR (KUNI VA SOATIGA SOAT-DAQIQA ANIQLIGIDA)
 function renderAdminOrders() {
   const list = document.getElementById('adminOrdersList');
   const countEl = document.getElementById('adminOrdersCount');
@@ -1043,22 +1082,37 @@ function renderAdminOrders() {
     return;
   }
 
-  list.innerHTML = orders.map(ord => `
-    <div class="bg-brand-card p-4 rounded-2xl border border-brand-border space-y-3">
-      <div class="flex items-center justify-between border-b border-brand-border pb-2">
-        <div>
-          <span class="font-bold text-white text-sm">${ord.id}</span>
-          <span class="text-xs text-gray-400 ml-2">${new Date(ord.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-          ${ord.promoCode ? `<span class="ml-2 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px]">Promokod: ${ord.promoCode} (-${ord.discount.toLocaleString()} so'm)</span>` : ''}
+  list.innerHTML = orders.map(ord => {
+    const dt = formatOrderDateTime(ord.date);
+    return `
+    <div class="bg-brand-card p-4 rounded-2xl border border-brand-border space-y-3 hover:border-brand-gold/30 transition shadow-lg">
+      <div class="flex flex-wrap items-center justify-between border-b border-brand-border pb-2.5 gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="font-mono font-bold text-white text-sm bg-black/60 px-2.5 py-1 rounded-xl border border-white/10">${ord.id}</span>
+          
+          <!-- KUNI VA SOAT-DAQIQASI -->
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/10 border border-brand-gold/40 text-amber-200 text-xs font-semibold shadow-sm">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
+            <span>${dt.dayLabel}</span>
+            <span class="text-white/40">•</span>
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-gold shrink-0"></i>
+            <span class="font-mono font-bold text-white">${dt.time}</span>
+            <span class="text-[10px] text-gray-400 font-mono hidden sm:inline">(${dt.date})</span>
+          </div>
+
+          ${ord.promoCode ? `<span class="px-2 py-0.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-[10px]">Promokod: ${ord.promoCode} (-${ord.discount.toLocaleString()} so'm)</span>` : ''}
         </div>
-        <select onchange="updateOrderStatus('${ord.id}', this.value)" class="px-2.5 py-1 rounded-xl bg-black border border-brand-border text-xs font-bold ${
-          ord.status === 'Yetkazildi' ? 'text-emerald-400' : 'text-amber-400'
-        } outline-none">
-          <option value="Kutilmoqda" ${ord.status === 'Kutilmoqda' ? 'selected' : ''}>Kutilmoqda</option>
-          <option value="Tayyorlanmoqda" ${ord.status === 'Tayyorlanmoqda' ? 'selected' : ''}>Tayyorlanmoqda</option>
-          <option value="Kuryerda" ${ord.status === 'Kuryerda' ? 'selected' : ''}>Yo'lda (Kuryerda)</option>
-          <option value="Yetkazildi" ${ord.status === 'Yetkazildi' ? 'selected' : ''}>Yetkazildi</option>
-        </select>
+
+        <div class="flex items-center gap-2">
+          <select onchange="updateOrderStatus('${ord.id}', this.value)" class="px-3 py-1.5 rounded-xl bg-black border border-brand-border text-xs font-bold ${
+            ord.status === 'Yetkazildi' ? 'text-emerald-400 border-emerald-500/40' : 'text-amber-400 border-amber-500/40'
+          } outline-none focus:border-brand-gold">
+            <option value="Kutilmoqda" ${ord.status === 'Kutilmoqda' ? 'selected' : ''}>🟡 Kutilmoqda</option>
+            <option value="Tayyorlanmoqda" ${ord.status === 'Tayyorlanmoqda' ? 'selected' : ''}>👨‍🍳 Tayyorlanmoqda</option>
+            <option value="Kuryerda" ${ord.status === 'Kuryerda' ? 'selected' : ''}>🛵 Yo'lda (Kuryerda)</option>
+            <option value="Yetkazildi" ${ord.status === 'Yetkazildi' ? 'selected' : ''}>🟢 Yetkazildi</option>
+          </select>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
@@ -1076,7 +1130,9 @@ function renderAdminOrders() {
         ${ord.items.map(i => `${i.name} (${i.qty}x)`).join(', ')}
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+  safeCreateIcons();
 }
 
 function updateOrderStatus(orderId, newStatus) {
@@ -1133,18 +1189,27 @@ function renderExpenses() {
     return;
   }
 
-  list.innerHTML = expenses.map(exp => `
-    <div class="p-2 rounded-xl bg-black/40 border border-brand-border flex items-center justify-between">
+  list.innerHTML = expenses.map(exp => {
+    const dt = formatOrderDateTime(exp.date);
+    return `
+    <div class="p-2.5 rounded-xl bg-black/40 border border-brand-border flex items-center justify-between hover:border-brand-gold/30 transition">
       <div>
-        <span class="text-white font-semibold">${exp.desc}</span>
-        <span class="text-[10px] text-gray-400 ml-2">(${exp.category})</span>
+        <div class="flex items-center gap-2">
+          <span class="text-white font-semibold text-xs">${exp.desc}</span>
+          <span class="text-[10px] text-gray-400">(${exp.category})</span>
+        </div>
+        <div class="text-[10px] text-amber-200/80 font-mono mt-0.5 flex items-center gap-1">
+          <i data-lucide="calendar" class="w-3 h-3 text-brand-gold"></i>
+          <span>${dt.dayLabel} • ${dt.time}</span>
+        </div>
       </div>
       <div class="flex items-center gap-2">
-        <span class="font-bold text-rose-400">-${exp.amount.toLocaleString()} so'm</span>
+        <span class="font-bold text-rose-400 text-xs">-${exp.amount.toLocaleString()} so'm</span>
         <button onclick="deleteExpense('${exp.id}')" class="text-gray-500 hover:text-rose-400 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   safeCreateIcons();
 }
 
@@ -1324,14 +1389,17 @@ function renderMyOrders() {
 
     const itemsSummary = (ord.items || []).map(i => `${i.name} (${i.qty}x)`).join(', ');
 
+    const dt = formatOrderDateTime(ord.date);
+
     return `
       <div class="bg-black/50 p-3.5 md:p-4 rounded-2xl border border-brand-border space-y-2.5 hover:border-brand-gold/40 transition">
-        <!-- Yuqori qator: ID va Holat -->
-        <div class="flex items-center justify-between border-b border-brand-border/60 pb-2">
-          <div>
-            <span class="font-bold text-white text-sm font-mono">${ord.id}</span>
-            <span class="text-[11px] text-gray-400 ml-2">
-              ${new Date(ord.date).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+        <!-- Yuqori qator: ID, Sana va Holat -->
+        <div class="flex flex-wrap items-center justify-between border-b border-brand-border/60 pb-2 gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-bold text-white text-sm font-mono bg-black/60 px-2 py-0.5 rounded-lg border border-white/10">${ord.id}</span>
+            <span class="text-[11px] text-amber-200 font-medium px-2 py-0.5 rounded-lg bg-amber-500/10 border border-brand-gold/30 flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3 h-3 text-brand-gold"></i>
+              <span>${dt.dayLabel} • ${dt.time}</span>
             </span>
           </div>
           <span class="px-2.5 py-1 rounded-xl text-[11px] font-bold border flex items-center gap-1.5 ${statusBg}">
