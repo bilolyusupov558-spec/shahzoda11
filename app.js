@@ -1117,17 +1117,17 @@ function renderAdminOrders() {
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
         <div>
-          <p class="text-gray-400">Mijoz: <span class="text-white font-bold">${ord.customer.name}</span> (<a href="tel:${ord.customer.phone}" class="text-blue-400 underline font-mono font-semibold">${ord.customer.phone}</a>)</p>
-          <p class="text-gray-400 mt-1">Aniq Manzil: <span class="text-amber-200 font-semibold">${ord.address.fullText}</span></p>
+          <p class="text-gray-400">Mijoz: <span class="text-white font-bold">${ord.customer?.name || 'Mijoz'}</span> (<a href="tel:${ord.customer?.phone || ''}" class="text-blue-400 underline font-mono font-semibold">${ord.customer?.phone || '-'}</a>)</p>
+          <p class="text-gray-400 mt-1">Aniq Manzil: <span class="text-amber-200 font-semibold">${ord.address?.fullText || ord.address || '-'}</span></p>
         </div>
         <div>
-          <p class="text-gray-400">Qaytim so'rovi: <span class="text-white font-medium">${ord.changeNotice}</span></p>
-          <p class="text-gray-400 mt-1">Jami Summa: <span class="text-brand-gold font-bold text-sm">${ord.total.toLocaleString()} so'm</span> (Naqd)</p>
+          <p class="text-gray-400">Qaytim so'rovi: <span class="text-white font-medium">${ord.changeNotice || ord.change_notice || 'Kerak emas'}</span></p>
+          <p class="text-gray-400 mt-1">Jami Summa: <span class="text-brand-gold font-bold text-sm">${(ord.total || 0).toLocaleString()} so'm</span> (Naqd)</p>
         </div>
       </div>
 
       <div class="p-2.5 rounded-xl bg-black/40 border border-brand-border/60 text-[11px] text-gray-300">
-        ${ord.items.map(i => `${i.name} (${i.qty}x)`).join(', ')}
+        ${(ord.items || []).map(i => `${i.name || 'Taom'} (${i.qty || 1}x)`).join(', ')}
       </div>
     </div>
   `;
