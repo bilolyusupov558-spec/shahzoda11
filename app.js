@@ -17,12 +17,12 @@ let appliedPromo = {
 
 // Standart sara menyu
 const DEFAULT_DISHES = [
-  { id: 'd1', name: "Shahzoda To'y Oshi", price: 38000, stock: 25, category: '2-taom', desc: "Maxsus qo'y go'shti, devzira guruch va sariq sabzi", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" },
+  { id: 'd1', name: "Premium To'y Oshi", price: 38000, stock: 25, category: '2-taom', desc: "Maxsus qo'y go'shti, devzira guruch va sariq sabzi", img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80" },
   { id: 'd2', name: "Yakkabog' Qozon Kabob", price: 48000, stock: 18, category: '2-taom', desc: "Qarsildoq go'sht, qovurilgan kartoshkalar bilan", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" },
   { id: 'd3', name: "Shohona Qo'y Sho'rva", price: 32000, stock: 15, category: '1-taom', desc: "Tiniq sho'rva, darmonli sabzavotlar va mayin go'sht", img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80" },
   { id: 'd4', name: "Qo'lda Cho'zilgan Lag'mon", price: 34000, stock: 20, category: '1-taom', desc: "Shirin qayla, qizil qalampir va sarxil ko'katlar", img: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?auto=format&fit=crop&w=600&q=80" },
   { id: 'd5', name: "Achichiq Salad", price: 12000, stock: 35, category: 'salat', desc: "Yangi pomidor, bodring, piyoz va rayhon", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80" },
-  { id: 'd6', name: "Suzmali Shahzoda Salati", price: 14000, stock: 22, category: 'salat', desc: "Tog' rayhoni, sarimsoq va muzdek suzma", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
+  { id: 'd6', name: "Suzmali Premium Salati", price: 14000, stock: 22, category: 'salat', desc: "Tog' rayhoni, sarimsoq va muzdek suzma", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80" },
   { id: 'd7', name: "Tandir Non (Issiq)", price: 5000, stock: 50, category: 'ichimlik', desc: "Yakkabog' tandirida pishgan shirmoy non", img: "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=600&q=80" },
   { id: 'd8', name: "Ko'k Choy (Choynakda)", price: 4000, stock: 100, category: 'ichimlik', desc: "Tog' giyohlari bilan damlangan xushbo'y choy", img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80" }
 ];
